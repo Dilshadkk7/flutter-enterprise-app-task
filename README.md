@@ -24,18 +24,28 @@ This project uses **Clean Architecture** divided into three layers:
 
 ## Setup Instructions
 
-1.  **Get Dependencies:**
-    ```sh
+1.  **Clone the Repository:**
+    ```bash
+    git clone https://github.com/Dilshadkk7/flutter-enterprise-app-task.git
+    ```
+
+2.  **Navigate to the Directory:**
+    ```bash
+    cd flutter-enterprise-app-task
+    ```
+
+3.  **Get Dependencies:**
+    ```bash
     flutter pub get
     ```
 
-2.  **Run Code Generator (IMPORTANT):**
+4.  **Run Code Generator (IMPORTANT):**
     This is required to generate Hive `TypeAdapters`.
-    ```sh
+    ```bash
     flutter pub run build_runner build --delete-conflicting-outputs
     ```
 
-3.  **Run the App:**
-    ```sh
+5.  **Run the App:**
+    ```bash
     flutter run
     ```
