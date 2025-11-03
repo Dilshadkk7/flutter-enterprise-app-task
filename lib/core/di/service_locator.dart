@@ -1,5 +1,7 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_enterprise_app/core/network/api_client.dart';
+import 'package:flutter_enterprise_app/core/network/network_info.dart';
 import 'package:flutter_enterprise_app/core/persistence/hive_service.dart';
 import 'package:flutter_enterprise_app/features/cart/data/datasources/cart_local_data_source.dart';
 import 'package:flutter_enterprise_app/features/cart/data/repositories/cart_repository_impl.dart';
@@ -52,6 +54,7 @@ Future<void> init() async {
         () => ProductRepositoryImpl(
       remoteDataSource: sl(),
       localDataSource: sl(),
+      networkInfo: sl(),
     ),
   );
   sl.registerLazySingleton<CartRepository>(
@@ -76,6 +79,9 @@ Future<void> init() async {
   );
 
   // Core
+  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
   sl.registerLazySingleton(() => ApiClient(Dio())); // Registers Dio client
   sl.registerLazySingleton(() => HiveService());
+  sl.registerLazySingleton(() => Connectivity());
+
 }

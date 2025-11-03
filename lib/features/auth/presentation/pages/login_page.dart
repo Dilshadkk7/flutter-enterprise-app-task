@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_enterprise_app/core/di/service_locator.dart';
+import 'package:flutter_enterprise_app/core/network/network_info.dart';
 import 'package:flutter_enterprise_app/features/product/presentation/pages/product_list_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -10,13 +12,14 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // Global key to manage the form state and trigger validation
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
 
-  // Simple validation logic
+  // Get the NetworkInfo service from the service locator
+  final NetworkInfo _networkInfo = sl<NetworkInfo>();
+
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'Email is required';
@@ -38,11 +41,25 @@ class _LoginPageState extends State<LoginPage> {
     return null;
   }
 
-  void _submitLogin() {
+  void _submitLogin() async {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() {
         _isLoading = true;
       });
+
+      // Check for internet connection first
+      if (!await _networkInfo.isConnected) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No Internet Connection'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return; // Stop the login process
+      }
 
       // Mock Login Logic
       Future.delayed(const Duration(seconds: 1), () {
@@ -50,7 +67,6 @@ class _LoginPageState extends State<LoginPage> {
           _isLoading = false;
         });
 
-        // Use pushReplacementNamed to prevent navigating back to Login
         Navigator.of(context).pushReplacementNamed(ProductListPage.routeName);
       });
     }
@@ -86,7 +102,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 32),
 
-                // Email Field
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(
@@ -99,7 +114,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 20),
 
-                // Password Field
                 TextFormField(
                   controller: _passwordController,
                   decoration: const InputDecoration(
@@ -112,7 +126,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 30),
 
-                // Login Button
                 ElevatedButton(
                   onPressed: _isLoading ? null : _submitLogin,
                   style: ElevatedButton.styleFrom(
