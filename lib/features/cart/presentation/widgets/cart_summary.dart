@@ -59,7 +59,12 @@ class CartSummary extends StatelessWidget {
                 ),
                 onPressed: onPlaceOrder,
               ),
-            ),
+            )
+                .animate()
+                .scale(
+                    delay: const Duration(milliseconds: 500),
+                    duration: const Duration(milliseconds: 500))
+                .shake(hz: 4, curve: Curves.easeInOut),
           ],
         ),
       ),

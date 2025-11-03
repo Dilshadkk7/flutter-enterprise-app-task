@@ -86,7 +86,12 @@ class ProductCard extends StatelessWidget {
                         icon: const Icon(Icons.add_shopping_cart),
                         onPressed: onAddToCart,
                         color: Theme.of(context).primaryColor,
-                      ),
+                      )
+                          .animate()
+                          .scale(
+                              delay: const Duration(milliseconds: 700),
+                              duration: const Duration(milliseconds: 400))
+                          .shake(hz: 4, curve: Curves.easeInOut),
                     ],
                   ),
                 ],
@@ -95,6 +100,9 @@ class ProductCard extends StatelessWidget {
           ],
         ),
       ),
-    ).animate().fadeIn(duration: const Duration(milliseconds: 500)).slideY(begin: 0.5, end: 0.0);
+    )
+        .animate()
+        .fadeIn(duration: const Duration(milliseconds: 500))
+        .slideY(begin: 0.5, end: 0.0);
   }
 }
