@@ -2,6 +2,14 @@
 
 This application fulfills the requirements of the Flutter Machine Coding Task.
 
+## Development environment
+* macOS required for development
+* Flutter installed (current version: 3.24.5)
+* Android studio used for development
+* Xcode installed(current version: 16.1)
+* Cocoapods installed(current version: 1.11.3)
+* `flutter packages get && cd ios;pod install`
+
 ## Architecture
 
 This project uses **Clean Architecture** divided into three layers:
@@ -40,7 +48,7 @@ This project uses **Clean Architecture** divided into three layers:
     ```
 
 4.  **Run Code Generator (IMPORTANT):**
-    This is required to generate Hive `TypeAdapters`.
+    This generates necessary files for Hive and Mockito.
     ```bash
     flutter pub run build_runner build --delete-conflicting-outputs
     ```
