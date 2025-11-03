@@ -1,24 +1,20 @@
 part of 'product_bloc.dart';
 
-// Events for the ProductBloc [cite: 27]
 abstract class ProductEvent extends Equatable {
   const ProductEvent();
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class FetchProducts extends ProductEvent {}
 
-class SearchProducts extends ProductEvent {
-  final String query;
-  const SearchProducts(this.query);
-  @override
-  List<Object> get props => [query];
-}
-
+// Used by the search and filter bar
 class FilterProducts extends ProductEvent {
-  final String category;
-  const FilterProducts(this.category);
+  final String searchTerm;
+  final String? category;
+
+  const FilterProducts({required this.searchTerm, this.category});
+
   @override
-  List<Object> get props => [category];
+  List<Object?> get props => [searchTerm, category];
 }
