@@ -1,30 +1,35 @@
-import 'package:dartz/dartz.dart';
+import 'package:dartz/dartz.dart' as dartz;
 import 'package:flutter_enterprise_app/core/utils/failure.dart';
 import 'package:flutter_enterprise_app/features/cart/data/datasources/cart_local_data_source.dart';
 import 'package:flutter_enterprise_app/features/cart/data/models/cart_item_model.dart';
 import 'package:flutter_enterprise_app/features/cart/domain/entities/cart.dart';
 import 'package:flutter_enterprise_app/features/cart/domain/repositories/cart_repository.dart';
+import 'package:flutter_enterprise_app/features/order/data/datasources/order_local_data_source.dart';
+import 'package:flutter_enterprise_app/features/order/domain/entities/order.dart';
 import 'package:flutter_enterprise_app/features/product/data/models/product_model.dart';
 import 'package:flutter_enterprise_app/features/product/domain/entities/product.dart';
 
-// Repository implementation for Cart [cite: 26]
 class CartRepositoryImpl implements CartRepository {
   final CartLocalDataSource localDataSource;
+  final OrderLocalDataSource orderLocalDataSource;
 
-  CartRepositoryImpl({required this.localDataSource});
+  CartRepositoryImpl({
+    required this.localDataSource,
+    required this.orderLocalDataSource,
+  });
 
   @override
-  Future<Either<Failure, Cart>> getCart() async {
+  Future<dartz.Either<Failure, Cart>> getCart() async {
     try {
       final items = await localDataSource.getCartItems();
-      return Right(Cart(items: items));
+      return dartz.Right(Cart(items: items));
     } catch (e) {
-      return Left(CacheFailure());
+      return dartz.Left(CacheFailure());
     }
   }
 
   @override
-  Future<Either<Failure, Cart>> addProductToCart(Product product) async {
+  Future<dartz.Either<Failure, Cart>> addProductToCart(Product product) async {
     try {
       final items = await localDataSource.getCartItems();
       final index = items.indexWhere((item) => item.product.id == product.id);
@@ -39,26 +44,26 @@ class CartRepositoryImpl implements CartRepository {
       }
 
       await localDataSource.saveCartItems(items);
-      return Right(Cart(items: items));
+      return dartz.Right(Cart(items: items));
     } catch (e) {
-      return Left(CacheFailure());
+      return dartz.Left(CacheFailure());
     }
   }
 
   @override
-  Future<Either<Failure, Cart>> removeProductFromCart(int productId) async {
+  Future<dartz.Either<Failure, Cart>> removeProductFromCart(int productId) async {
     try {
       final items = await localDataSource.getCartItems();
       items.removeWhere((item) => item.product.id == productId); //
       await localDataSource.saveCartItems(items);
-      return Right(Cart(items: items));
+      return dartz.Right(Cart(items: items));
     } catch (e) {
-      return Left(CacheFailure());
+      return dartz.Left(CacheFailure());
     }
   }
 
   @override
-  Future<Either<Failure, Cart>> updateProductQuantity(int productId, int quantity) async {
+  Future<dartz.Either<Failure, Cart>> updateProductQuantity(int productId, int quantity) async {
     try {
       final items = await localDataSource.getCartItems();
       final index = items.indexWhere((item) => item.product.id == productId);
@@ -71,24 +76,37 @@ class CartRepositoryImpl implements CartRepository {
           items.removeAt(index);
         }
         await localDataSource.saveCartItems(items);
-        return Right(Cart(items: items));
+        return dartz.Right(Cart(items: items));
       }
-      return Left(CacheFailure()); // Item not found
+      return dartz.Left(CacheFailure()); // Item not found
     } catch (e) {
-      return Left(CacheFailure());
+      return dartz.Left(CacheFailure());
     }
   }
 
   @override
-  Future<Either<Failure, void>> placeOrder() async {
-    // This is a mock order success
+  Future<dartz.Either<Failure, void>> placeOrder() async {
     try {
-      // In a real app, this would call a remote data source.
-      // For this task, we just clear the local cart.
+      final cartItems = await localDataSource.getCartItems();
+      if (cartItems.isEmpty) {
+        return dartz.Left(CacheFailure(message: 'Cart is empty'));
+      }
+
+      final products = cartItems.map((item) => item.product).toList();
+      final totalPrice = cartItems.fold(0.0, (sum, item) => sum + item.product.price * item.quantity);
+
+      final order = Order(
+        items: products,
+        totalPrice: totalPrice,
+        orderDate: DateTime.now(),
+      );
+
+      await orderLocalDataSource.saveOrder(order);
       await localDataSource.clearCart();
-      return const Right(null);
+
+      return dartz.Right(null);
     } catch (e) {
-      return Left(CacheFailure());
+      return dartz.Left(CacheFailure());
     }
   }
 }

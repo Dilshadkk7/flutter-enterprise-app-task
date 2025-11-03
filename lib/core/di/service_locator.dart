@@ -10,6 +10,11 @@ import 'package:flutter_enterprise_app/features/cart/domain/usecases/place_order
 import 'package:flutter_enterprise_app/features/cart/domain/usecases/remove_from_cart.dart';
 import 'package:flutter_enterprise_app/features/cart/domain/usecases/update_cart_quantity.dart';
 import 'package:flutter_enterprise_app/features/cart/presentation/bloc/cart_bloc.dart';
+import 'package:flutter_enterprise_app/features/order/data/datasources/order_local_data_source.dart';
+import 'package:flutter_enterprise_app/features/order/data/repositories/order_repository_impl.dart';
+import 'package:flutter_enterprise_app/features/order/domain/repositories/order_repository.dart';
+import 'package:flutter_enterprise_app/features/order/domain/usecases/get_orders.dart';
+import 'package:flutter_enterprise_app/features/order/presentation/bloc/order_history_bloc.dart';
 import 'package:flutter_enterprise_app/features/product/data/datasources/product_local_data_source.dart';
 import 'package:flutter_enterprise_app/features/product/data/datasources/product_remote_data_source.dart';
 import 'package:flutter_enterprise_app/features/product/data/repositories/product_repository_impl.dart';
@@ -31,6 +36,7 @@ Future<void> init() async {
     updateCartQuantity: sl(),
     placeOrder: sl(),
   ));
+  sl.registerFactory(() => OrderHistoryBloc(getOrders: sl()));
 
   // Use Cases (Domain Layer)
   sl.registerLazySingleton(() => GetAllProducts(sl()));
@@ -39,6 +45,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => RemoveFromCart(sl()));
   sl.registerLazySingleton(() => UpdateCartQuantity(sl()));
   sl.registerLazySingleton(() => PlaceOrder(sl()));
+  sl.registerLazySingleton(() => GetOrders(sl()));
 
   // Repositories (Data Layer)
   sl.registerLazySingleton<ProductRepository>(
@@ -48,7 +55,10 @@ Future<void> init() async {
     ),
   );
   sl.registerLazySingleton<CartRepository>(
-        () => CartRepositoryImpl(localDataSource: sl()),
+        () => CartRepositoryImpl(localDataSource: sl(), orderLocalDataSource: sl()),
+  );
+  sl.registerLazySingleton<OrderRepository>(
+        () => OrderRepositoryImpl(localDataSource: sl()),
   );
 
   // Data Sources (Data Layer)
@@ -60,6 +70,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<CartLocalDataSource>(
         () => CartLocalDataSourceImpl(hiveService: sl()),
+  );
+  sl.registerLazySingleton<OrderLocalDataSource>(
+        () => OrderLocalDataSourceImpl(hiveService: sl()),
   );
 
   // Core

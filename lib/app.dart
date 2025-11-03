@@ -6,6 +6,8 @@ import 'package:flutter_enterprise_app/core/navigation/fade_page_route.dart';
 import 'package:flutter_enterprise_app/features/auth/presentation/pages/login_page.dart';
 import 'package:flutter_enterprise_app/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:flutter_enterprise_app/features/cart/presentation/pages/cart_page.dart';
+import 'package:flutter_enterprise_app/features/order/presentation/bloc/order_history_bloc.dart';
+import 'package:flutter_enterprise_app/features/order/presentation/pages/order_history_page.dart';
 import 'package:flutter_enterprise_app/features/product/domain/entities/product.dart';
 import 'package:flutter_enterprise_app/features/product/presentation/bloc/product_bloc.dart';
 import 'package:flutter_enterprise_app/features/product/presentation/pages/product_detail_page.dart';
@@ -23,6 +25,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => sl<CartBloc>()..add(LoadCart()),
+        ),
+        BlocProvider(
+          create: (_) => sl<OrderHistoryBloc>()..add(LoadOrderHistory()),
         ),
       ],
       child: MaterialApp(
@@ -42,6 +47,9 @@ class MyApp extends StatelessWidget {
 
             case CartPage.routeName:
               return FadePageRoute(builder: (_) => const CartPage());
+
+            case OrderHistoryPage.routeName:
+              return FadePageRoute(builder: (_) => const OrderHistoryPage());
 
             case ProductDetailPage.routeName:
               final product = settings.arguments as Product;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_enterprise_app/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:flutter_enterprise_app/features/cart/presentation/pages/cart_page.dart';
+import 'package:flutter_enterprise_app/features/order/presentation/pages/order_history_page.dart';
 import 'package:flutter_enterprise_app/features/product/domain/entities/product.dart';
 import 'package:flutter_enterprise_app/features/product/presentation/bloc/product_bloc.dart';
 import 'package:flutter_enterprise_app/features/product/presentation/widgets/product_card.dart';
@@ -34,6 +35,12 @@ class _ProductListPageState extends State<ProductListPage> {
           title: const Text('Product Catalog'),
           automaticallyImplyLeading: false,
           actions: [
+            IconButton(
+              icon: const Icon(Icons.history),
+              onPressed: () {
+                Navigator.of(context).pushNamed(OrderHistoryPage.routeName);
+              },
+            ),
             BlocBuilder<CartBloc, CartState>(
               builder: (context, state) {
                 int itemCount = 0;
