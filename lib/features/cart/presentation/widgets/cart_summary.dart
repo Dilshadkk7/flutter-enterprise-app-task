@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class CartSummary extends StatelessWidget {
   final double totalPrice;
@@ -36,10 +37,13 @@ class CartSummary extends StatelessWidget {
                 Text(
                   '\$${totalPrice.toStringAsFixed(2)}',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                )
+                    .animate()
+                    .fade(duration: const Duration(milliseconds: 300))
+                    .scale() // Animate the text on changes
               ],
             ),
             const SizedBox(height: 16),
@@ -59,6 +63,13 @@ class CartSummary extends StatelessWidget {
           ],
         ),
       ),
-    );
+    )
+        .animate()
+        .slide(
+          begin: const Offset(0, 1),
+          end: Offset.zero,
+          duration: const Duration(milliseconds: 400), // Slide up from the bottom
+        )
+        .fadeIn();
   }
 }

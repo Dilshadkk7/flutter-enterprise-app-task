@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_enterprise_app/features/product/domain/entities/product.dart';
 import 'package:flutter_enterprise_app/features/product/presentation/pages/product_detail_page.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -94,6 +95,6 @@ class ProductCard extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ).animate().fadeIn(duration: const Duration(milliseconds: 500)).slideY(begin: 0.5, end: 0.0);
   }
 }

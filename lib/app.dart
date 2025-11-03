@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_enterprise_app/core/config/app_theme.dart';
 import 'package:flutter_enterprise_app/core/di/service_locator.dart';
+import 'package:flutter_enterprise_app/core/navigation/fade_page_route.dart';
 import 'package:flutter_enterprise_app/features/auth/presentation/pages/login_page.dart';
 import 'package:flutter_enterprise_app/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:flutter_enterprise_app/features/cart/presentation/pages/cart_page.dart';
@@ -34,17 +35,17 @@ class MyApp extends StatelessWidget {
         onGenerateRoute: (settings) {
           switch (settings.name) {
             case LoginPage.routeName:
-              return MaterialPageRoute(builder: (_) => const LoginPage());
+              return FadePageRoute(builder: (_) => const LoginPage());
 
             case ProductListPage.routeName:
-              return MaterialPageRoute(builder: (_) => const ProductListPage());
+              return FadePageRoute(builder: (_) => const ProductListPage());
 
             case CartPage.routeName:
-              return MaterialPageRoute(builder: (_) => const CartPage());
+              return FadePageRoute(builder: (_) => const CartPage());
 
             case ProductDetailPage.routeName:
               final product = settings.arguments as Product;
-              return MaterialPageRoute(
+              return FadePageRoute(
                 builder: (_) => ProductDetailPage(product: product),
               );
 
