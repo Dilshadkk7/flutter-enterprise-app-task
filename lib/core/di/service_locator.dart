@@ -3,6 +3,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter_enterprise_app/core/network/api_client.dart';
 import 'package:flutter_enterprise_app/core/network/network_info.dart';
 import 'package:flutter_enterprise_app/core/persistence/hive_service.dart';
+import 'package:flutter_enterprise_app/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:flutter_enterprise_app/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:flutter_enterprise_app/features/auth/domain/repositories/auth_repository.dart';
+import 'package:flutter_enterprise_app/features/auth/domain/usecases/login.dart';
+import 'package:flutter_enterprise_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter_enterprise_app/features/cart/data/datasources/cart_local_data_source.dart';
 import 'package:flutter_enterprise_app/features/cart/data/repositories/cart_repository_impl.dart';
 import 'package:flutter_enterprise_app/features/cart/domain/repositories/cart_repository.dart';
@@ -30,6 +35,7 @@ final sl = GetIt.instance; // sl = Service Locator
 // Registers dependencies using get_it [cite: 28]
 Future<void> init() async {
   // Blocs
+  sl.registerFactory(() => AuthBloc(login: sl()));
   sl.registerFactory(() => ProductBloc(getAllProducts: sl()));
   sl.registerFactory(() => CartBloc(
     getCart: sl(),
@@ -41,6 +47,7 @@ Future<void> init() async {
   sl.registerFactory(() => OrderHistoryBloc(getOrders: sl()));
 
   // Use Cases (Domain Layer)
+  sl.registerLazySingleton(() => Login(sl()));
   sl.registerLazySingleton(() => GetAllProducts(sl()));
   sl.registerLazySingleton(() => GetCart(sl()));
   sl.registerLazySingleton(() => AddToCart(sl()));
@@ -50,6 +57,9 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetOrders(sl()));
 
   // Repositories (Data Layer)
+  sl.registerLazySingleton<AuthRepository>(
+        () => AuthRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
+  );
   sl.registerLazySingleton<ProductRepository>(
         () => ProductRepositoryImpl(
       remoteDataSource: sl(),
@@ -65,6 +75,9 @@ Future<void> init() async {
   );
 
   // Data Sources (Data Layer)
+  sl.registerLazySingleton<AuthRemoteDataSource>(
+        () => AuthRemoteDataSourceImpl(),
+  );
   sl.registerLazySingleton<ProductRemoteDataSource>(
         () => ProductRemoteDataSourceImpl(client: sl()),
   );
